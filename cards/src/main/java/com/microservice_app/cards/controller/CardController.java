@@ -1,10 +1,10 @@
-package com.microservices_app.cards.controller;
+package com.microservice_app.cards.controller;
 
-import com.microservices_app.cards.constants.CardConstant;
-import com.microservices_app.cards.dto.CardDto;
-import com.microservices_app.cards.dto.ErrorResponseDto;
-import com.microservices_app.cards.dto.ResponseDto;
-import com.microservices_app.cards.service.ICardService;
+import com.microservice_app.cards.constants.CardConstant;
+import com.microservice_app.cards.dto.CardDto;
+import com.microservice_app.cards.dto.ErrorResponseDto;
+import com.microservice_app.cards.dto.ResponseDto;
+import com.microservice_app.cards.service.ICardService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;

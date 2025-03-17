@@ -1,4 +1,4 @@
-package com.microservices_app.cards.exception;
+package com.microservice_app.cards.exception;
 
 
 import org.springframework.http.HttpStatus;

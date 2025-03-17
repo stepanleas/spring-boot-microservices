@@ -1,4 +1,4 @@
-package com.microservices_app.cards.entity;
+package com.microservice_app.cards.entity;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;

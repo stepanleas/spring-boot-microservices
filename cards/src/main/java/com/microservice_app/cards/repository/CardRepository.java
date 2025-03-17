@@ -1,6 +1,6 @@
-package com.microservices_app.cards.repository;
+package com.microservice_app.cards.repository;
 
-import com.microservices_app.cards.entity.Card;
+import com.microservice_app.cards.entity.Card;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

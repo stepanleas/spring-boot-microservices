@@ -1,6 +1,6 @@
-package com.microservices_app.cards.service;
+package com.microservice_app.cards.service;
 
-import com.microservices_app.cards.dto.CardDto;
+import com.microservice_app.cards.dto.CardDto;
 
 public interface ICardService {
     void createCard(String mobileNumber);

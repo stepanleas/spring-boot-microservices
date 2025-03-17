@@ -1,4 +1,4 @@
-package com.microservices_app.cards;
+package com.microservice_app.cards;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

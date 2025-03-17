@@ -1,7 +1,7 @@
-package com.microservices_app.cards.mapper;
+package com.microservice_app.cards.mapper;
 
-import com.microservices_app.cards.dto.CardDto;
-import com.microservices_app.cards.entity.Card;
+import com.microservice_app.cards.dto.CardDto;
+import com.microservice_app.cards.entity.Card;
 
 public class CardMapper {
     public static CardDto mapToCardDto(Card card, CardDto cardDto) {

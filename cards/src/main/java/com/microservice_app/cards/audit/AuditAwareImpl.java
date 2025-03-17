@@ -1,4 +1,4 @@
-package com.microservices_app.cards.audit;
+package com.microservice_app.cards.audit;
 
 import org.springframework.data.domain.AuditorAware;
 import org.springframework.stereotype.Component;
