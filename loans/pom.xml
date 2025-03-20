@@ -9,11 +9,11 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.microservice_app</groupId>
-	<artifactId>cards</artifactId>
+	<artifactId>loans</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>cards</name>
+	<name>loans</name>
 	<packaging>jar</packaging>
-	<description>Microservice for cards</description>
+	<description>Microservice for loans</description>
 	<url/>
 	<licenses>
 		<license/>
