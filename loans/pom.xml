@@ -12,6 +12,7 @@
 	<artifactId>loans</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>loans</name>
+	<packaging>jar</packaging>
 	<description>Microservice for loans</description>
 	<url/>
 	<licenses>
@@ -93,6 +94,9 @@
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 				<configuration>
+					<image>
+						<name>artellas/${project.artifactId}:1</name>
+					</image>
 					<excludes>
 						<exclude>
 							<groupId>org.projectlombok</groupId>
