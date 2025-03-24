@@ -95,7 +95,7 @@
 				<artifactId>spring-boot-maven-plugin</artifactId>
 				<configuration>
 					<image>
-						<name>artellas/${project.artifactId}:1</name>
+						<name>artellas/${project.artifactId}:2</name>
 					</image>
 					<excludes>
 						<exclude>
