@@ -188,8 +188,7 @@ public class CardController {
                 schema = @Schema(implementation = ErrorResponseDto.class)
             )
         )
-    }
-    )
+    })
     @GetMapping("/build-info")
     public ResponseEntity<String> getBuildInfo() {
         return ResponseEntity
@@ -238,8 +237,7 @@ public class CardController {
                 schema = @Schema(implementation = ErrorResponseDto.class)
             )
         )
-    }
-    )
+    })
     @GetMapping("/contact-info")
     public ResponseEntity<CardContactInfoDto> getContactInfo() {
         return ResponseEntity.ok(cardContactInfoDto);
