@@ -31,10 +31,10 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping(path = "/api", produces = {MediaType.APPLICATION_JSON_VALUE})
 @Validated
 public class LoanController {
-    private ILoanService iLoanService;
+    private final ILoanService loanService;
 
-    public LoanController(ILoanService iLoanService) {
-        this.iLoanService = iLoanService;
+    public LoanController(ILoanService loanService) {
+        this.loanService = loanService;
     }
 
     @Value("${build.version}")
@@ -67,7 +67,7 @@ public class LoanController {
     public ResponseEntity<ResponseDto> createLoan(@RequestParam
                                                   @Pattern(regexp="(^$|[0-9]{10})",message = "Mobile number must be 10 digits")
                                                   String mobileNumber) {
-        iLoanService.createLoan(mobileNumber);
+        loanService.createLoan(mobileNumber);
 
         return ResponseEntity
             .status(HttpStatus.CREATED)
@@ -95,7 +95,7 @@ public class LoanController {
     public ResponseEntity<LoanDto> fetchLoanDetails(@RequestParam
                                                      @Pattern(regexp="(^$|[0-9]{10})",message = "Mobile number must be 10 digits")
                                                      String mobileNumber) {
-        LoanDto loanDto = iLoanService.fetchLoan(mobileNumber);
+        LoanDto loanDto = loanService.fetchLoan(mobileNumber);
 
         return ResponseEntity.status(HttpStatus.OK).body(loanDto);
     }
@@ -123,7 +123,7 @@ public class LoanController {
     })
     @PutMapping("/update")
     public ResponseEntity<ResponseDto> updateLoanDetails(@Valid @RequestBody LoanDto loanDto) {
-        if (iLoanService.updateLoan(loanDto)) {
+        if (loanService.updateLoan(loanDto)) {
             return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(new ResponseDto(LoanConstant.STATUS_200, LoanConstant.MESSAGE_200));
@@ -159,7 +159,7 @@ public class LoanController {
     public ResponseEntity<ResponseDto> deleteLoanDetails(@RequestParam
                                                          @Pattern(regexp="(^$|[0-9]{10})",message = "Mobile number must be 10 digits")
                                                          String mobileNumber) {
-        if (iLoanService.deleteLoan(mobileNumber)) {
+        if (loanService.deleteLoan(mobileNumber)) {
             return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(new ResponseDto(LoanConstant.STATUS_200, LoanConstant.MESSAGE_200));
