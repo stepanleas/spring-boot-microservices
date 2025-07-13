@@ -7,6 +7,7 @@ spring:
     active: "prod"
   datasource:
     url: jdbc:mysql://localhost:3306/accountsdb
+    driverClassName: com.mysql.cj.jdbc.Driver
     username: root
     password: root
   jpa:
