@@ -8,6 +8,9 @@ services:
     extends:
       file: common-config.yaml
       service: microservice-db-config
+    volumes:
+      - ../../volumes/scripts/accounts-schema.sql:/docker-entrypoint-initdb.d/accounts-schema.sql
+      - ../../volumes/default/accountsdb:/var/lib/mysql
 
   loansdb:
     container_name: loansdb
@@ -18,6 +21,9 @@ services:
     extends:
       file: common-config.yaml
       service: microservice-db-config
+    volumes:
+      - ../../volumes/scripts/loans-schema.sql:/docker-entrypoint-initdb.d/loans-schema.sql
+      - ../../volumes/default/loansdb:/var/lib/mysql
 
   cardsdb:
     container_name: cardsdb
@@ -28,6 +34,9 @@ services:
     extends:
       file: common-config.yaml
       service: microservice-db-config
+    volumes:
+      - ../../volumes/scripts/cards-schema.sql:/docker-entrypoint-initdb.d/cards-schema.sql
+      - ../../volumes/default/cardsdb:/var/lib/mysql
 
   configserver:
     image: artellas/configserver:3
