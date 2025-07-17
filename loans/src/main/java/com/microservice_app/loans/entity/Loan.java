@@ -1,12 +1,10 @@
 package com.microservice_app.loans.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
+@Table(name = "loans")
 @Getter @Setter @ToString @AllArgsConstructor @NoArgsConstructor
 public class Loan extends BaseEntity {
     @Id
