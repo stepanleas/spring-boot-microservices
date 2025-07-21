@@ -1,4 +1,4 @@
-package com.microservice_app.loans.dto;
+package com.microservice_app.accounts.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotEmpty;

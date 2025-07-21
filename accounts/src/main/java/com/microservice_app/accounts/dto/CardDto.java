@@ -1,4 +1,4 @@
-package com.microservice_app.cards.dto;
+package com.microservice_app.accounts.dto;
 
 
 import io.swagger.v3.oas.annotations.media.Schema;
