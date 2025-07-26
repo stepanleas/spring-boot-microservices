@@ -44,3 +44,9 @@ info:
     name: "accounts"
     description: "Accounts Service"
     version: "1.0.0"
+
+logging:
+  level:
+    com:
+      microservice_app:
+        accounts: DEBUG

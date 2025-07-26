@@ -14,6 +14,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Pattern;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
@@ -31,6 +33,9 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping(path = "/api", produces = {MediaType.APPLICATION_JSON_VALUE})
 @Validated
 public class LoanController {
+
+    private static final Logger logger = LoggerFactory.getLogger(LoanController.class);
+
     private final ILoanService loanService;
 
     public LoanController(ILoanService loanService) {
@@ -92,9 +97,13 @@ public class LoanController {
         )
     })
     @GetMapping("/fetch")
-    public ResponseEntity<LoanDto> fetchLoanDetails(@RequestParam
-                                                     @Pattern(regexp="(^$|[0-9]{10})",message = "Mobile number must be 10 digits")
-                                                     String mobileNumber) {
+    public ResponseEntity<LoanDto> fetchLoanDetails(
+        @RequestHeader("microservice-correlation-id") String correlationId,
+        @RequestParam
+        @Pattern(regexp="(^$|[0-9]{10})",message = "Mobile number must be 10 digits")
+        String mobileNumber
+    ) {
+        logger.debug("Microservice correlation id found: {}", correlationId);
         LoanDto loanDto = loanService.fetchLoan(mobileNumber);
 
         return ResponseEntity.status(HttpStatus.OK).body(loanDto);
