@@ -6,6 +6,7 @@ import com.microservice_app.accounts.dto.CustomerDto;
 import com.microservice_app.accounts.dto.ErrorResponseDto;
 import com.microservice_app.accounts.dto.ResponseDto;
 import com.microservice_app.accounts.service.IAccountService;
+import io.github.resilience4j.retry.annotation.Retry;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -22,6 +23,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.concurrent.TimeoutException;
 
 @Tag(
     name = "CRUD REST APIs for accounts",
@@ -191,9 +194,14 @@ public class AccountController {
             )
         )
     })
+    @Retry(name = "getBuildVersion", fallbackMethod = "getBuildVersionFallback")
     @GetMapping("/build-info")
-    public ResponseEntity<String> getBuildVersion() {
+    public ResponseEntity<String> getBuildVersion() throws TimeoutException {
         return ResponseEntity.ok(buildVersion);
+    }
+
+    public ResponseEntity<String> getBuildVersionFallback(Throwable throwable) {
+        return ResponseEntity.ok("0.9");
     }
 
     @Operation(
