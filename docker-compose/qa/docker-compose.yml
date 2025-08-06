@@ -38,6 +38,19 @@ services:
       - ../../volumes/scripts/cards-schema.sql:/docker-entrypoint-initdb.d/cards-schema.sql
       - ../../volumes/qa/cardsdb:/var/lib/mysql
 
+  redis:
+    image: redis:alpine
+    container_name: redis-container
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli ping | grep PONG"]
+      timeout: 10s
+      retries: 10
+    extends:
+      file: common-config.yaml
+      service: network-deploy-service
+
   configserver:
     image: artellas/configserver:5
     container_name: configserver-ms
@@ -160,8 +173,14 @@ services:
         condition: service_healthy
       cards:
         condition: service_healthy
+      redis:
+        condition: service_healthy
     environment:
       SPRING_APPLICATION_NAME: gatewayserver
+      SPRING_DATA_REDIS_CONNECT-TIMEOUT: 2s
+      SPRING_DATA_REDIS_HOST: redis
+      SPRING_DATA_REDIS_PORT: 6379
+      SPRING_DATA_REDIS_TIMEOUT: 1S
     extends:
       file: common-config.yaml
       service: microservice-eureka-config
