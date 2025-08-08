@@ -52,7 +52,7 @@ services:
       service: network-deploy-service
 
   configserver:
-    image: artellas/configserver:5
+    image: artellas/configserver:6
     container_name: configserver-ms
     ports:
       - "8071:8071"
@@ -67,7 +67,7 @@ services:
       service: microservice-base-config
 
   eurekaserver:
-    image: artellas/eurekaserver:5
+    image: artellas/eurekaserver:6
     container_name: eurekaserver-ms
     ports:
       - "8070:8070"
@@ -87,7 +87,7 @@ services:
       SPRING_APPLICATION_NAME: eurekaserver
 
   accounts:
-    image: artellas/accounts:5
+    image: artellas/accounts:6
     container_name: accounts-ms
     ports:
       - "8080:8080"
@@ -112,7 +112,7 @@ services:
       service: microservice-eureka-config
 
   loans:
-    image: artellas/loans:5
+    image: artellas/loans:6
     container_name: loans-ms
     ports:
       - "8090:8090"
@@ -137,7 +137,7 @@ services:
       service: microservice-eureka-config
 
   cards:
-    image: artellas/cards:5
+    image: artellas/cards:6
     container_name: cards-ms
     ports:
       - "9000:9000"
@@ -162,7 +162,7 @@ services:
       service: microservice-eureka-config
 
   gatewayserver:
-    image: artellas/gatewayserver:5
+    image: artellas/gatewayserver:6
     container_name: gatewayserver-ms
     ports:
       - "8072:8072"
