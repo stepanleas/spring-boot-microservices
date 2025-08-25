@@ -30,6 +30,10 @@ build/
 !**/src/main/**/build/
 !**/src/test/**/build/
 
+### Volumes ###
 /volumes/default/
 /volumes/qa/
 /volumes/prod/
+/docker-compose/default/.data
+/docker-compose/prod/.data
+/docker-compose/qa/.data
