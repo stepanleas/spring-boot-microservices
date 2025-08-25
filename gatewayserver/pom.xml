@@ -100,7 +100,7 @@
 						<image>artellas/${project.artifactId}:6</image>
 					</to>
 					<container>
-						<mainClass>com.microservice_app.gatewayserver.GatewayServerApplication</mainClass>
+						<mainClass>com.microservice_app.gatewayserver.GatewayserverApplication</mainClass>
 					</container>
 				</configuration>
 			</plugin>
