@@ -81,6 +81,30 @@ services:
       file: common-config.yaml
       service: network-deploy-service
 
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ../observability/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+    extends:
+      file: common-config.yaml
+      service: network-deploy-service
+
+  tempo:
+    image: grafana/tempo:latest
+    container_name: tempo
+    command: -config.file /etc/tempo-config.yaml
+    ports:
+      - "4318:4318"
+      - "3110:3100"
+    volumes:
+      - ../observability/tempo/tempo.yaml:/etc/tempo-config.yaml
+    extends:
+      file: common-config.yaml
+      service: network-deploy-service
+
   grafana:
     image: grafana/grafana:latest
     environment:
@@ -103,17 +127,6 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
-    extends:
-      file: common-config.yaml
-      service: network-deploy-service
-
-  prometheus:
-    image: prom/prometheus:latest
-    container_name: prometheus
-    ports:
-      - "9090:9090"
-    volumes:
-      - ../observability/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
     extends:
       file: common-config.yaml
       service: network-deploy-service
@@ -215,13 +228,15 @@ services:
       - "8071:8071"
     healthcheck:
       test: "curl --fail --silent localhost:8071/actuator/health/readiness | grep UP || exit 1"
-      interval: 10s
+      interval: 20s
       timeout: 5s
-      retries: 10
+      retries: 20
       start_period: 10s
     extends:
       file: common-config.yaml
       service: microservice-base-config
+    environment:
+      OTEL_SERVICE_NAME: configserver
 
   eurekaserver:
     image: artellas/eurekaserver:6
@@ -233,15 +248,16 @@ services:
         condition: service_healthy
     healthcheck:
       test: "curl --fail --silent localhost:8070/actuator/health/readiness | grep UP || exit 1"
-      interval: 10s
+      interval: 20s
       timeout: 5s
-      retries: 10
+      retries: 20
       start_period: 10s
     extends:
       file: common-config.yaml
       service: microservice-configserver-config
     environment:
       SPRING_APPLICATION_NAME: eurekaserver
+      OTEL_SERVICE_NAME: eurekaserver
 
   accountsdb:
     container_name: accountsdb
@@ -270,13 +286,14 @@ services:
         condition: service_healthy
     healthcheck:
       test: "curl --fail --silent localhost:8080/actuator/health/readiness | grep UP || exit 1"
-      interval: 10s
+      interval: 20s
       timeout: 5s
-      retries: 10
+      retries: 20
       start_period: 10s
     environment:
       SPRING_APPLICATION_NAME: accounts
       SPRING_DATASOURCE_URL: jdbc:mysql://accountsdb:3306/accountsdb
+      OTEL_SERVICE_NAME: accounts
     extends:
       file: common-config.yaml
       service: microservice-eureka-config
@@ -308,13 +325,14 @@ services:
         condition: service_healthy
     healthcheck:
       test: "curl --fail --silent localhost:8090/actuator/health/readiness | grep UP || exit 1"
-      interval: 10s
+      interval: 20s
       timeout: 5s
-      retries: 10
+      retries: 20
       start_period: 10s
     environment:
       SPRING_APPLICATION_NAME: loans
       SPRING_DATASOURCE_URL: jdbc:mysql://loansdb:3306/loansdb
+      OTEL_SERVICE_NAME: loans
     extends:
       file: common-config.yaml
       service: microservice-eureka-config
@@ -346,13 +364,14 @@ services:
         condition: service_healthy
     healthcheck:
       test: "curl --fail --silent localhost:9000/actuator/health/readiness | grep UP || exit 1"
-      interval: 10s
+      interval: 20s
       timeout: 5s
-      retries: 10
+      retries: 20
       start_period: 10s
     environment:
       SPRING_APPLICATION_NAME: cards
       SPRING_DATASOURCE_URL: jdbc:mysql://cardsdb:3306/cardsdb
+      OTEL_SERVICE_NAME: cards
     extends:
       file: common-config.yaml
       service: microservice-eureka-config
@@ -371,10 +390,7 @@ services:
         condition: service_healthy
     environment:
       SPRING_APPLICATION_NAME: gatewayserver
-      SPRING_DATA_REDIS_CONNECT-TIMEOUT: 2s
-      SPRING_DATA_REDIS_HOST: redis
-      SPRING_DATA_REDIS_PORT: 6379
-      SPRING_DATA_REDIS_TIMEOUT: 1S
+      OTEL_SERVICE_NAME: gatewayserver
     extends:
       file: common-config.yaml
       service: microservice-eureka-config
