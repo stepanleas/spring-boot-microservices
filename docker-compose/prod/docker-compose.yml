@@ -1,4 +1,42 @@
 services:
+  keycloak:
+    image: quay.io/keycloak/keycloak:26.3.3
+    container_name: keycloak
+    ports:
+      - "7080:8080"
+    depends_on:
+      - keycloakdb
+    environment:
+      KC_DB: mysql
+      KC_DB_URL: jdbc:mysql://keycloakdb:3306/keycloakdb
+      KC_DB_USERNAME: keycloak
+      KC_DB_PASSWORD: password
+
+      KC_LOG_LEVEL: info
+      KC_METRICS_ENABLED: true
+      KC_HEALTH_ENABLED: true
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+    command: "start-dev"
+    extends:
+      file: common-config.yaml
+      service: network-deploy-service
+
+  keycloakdb:
+    container_name: keycloakdb
+    ports:
+      - "3309:3306"
+    environment:
+      MYSQL_DATABASE: keycloakdb
+      MYSQL_USER: keycloak
+      MYSQL_PASSWORD: password
+      MYSQL_ROOT_PASSWORD: root
+    extends:
+      file: common-config.yaml
+      service: microservice-db-config
+    volumes:
+      - ../../volumes/prod/keycloackdb:/var/lib/mysql
+
   read:
     image: grafana/loki:latest
     command: "-config.file=/etc/loki/config.yaml -target=read"
@@ -222,7 +260,7 @@ services:
       - ecommerce-ms
 
   configserver:
-    image: artellas/configserver:6
+    image: artellas/configserver:7
     container_name: configserver-ms
     ports:
       - "8071:8071"
@@ -239,7 +277,7 @@ services:
       OTEL_SERVICE_NAME: configserver
 
   eurekaserver:
-    image: artellas/eurekaserver:6
+    image: artellas/eurekaserver:7
     container_name: eurekaserver-ms
     ports:
       - "8070:8070"
@@ -273,7 +311,7 @@ services:
       - ../../volumes/prod/accountsdb:/var/lib/mysql
 
   accounts:
-    image: artellas/accounts:6
+    image: artellas/accounts:7
     container_name: accounts-ms
     ports:
       - "8080:8080"
@@ -312,7 +350,7 @@ services:
       - ../../volumes/prod/loansdb:/var/lib/mysql
 
   loans:
-    image: artellas/loans:6
+    image: artellas/loans:7
     container_name: loans-ms
     ports:
       - "8090:8090"
@@ -351,7 +389,7 @@ services:
       - ../../volumes/prod/cardsdb:/var/lib/mysql
 
   cards:
-    image: artellas/cards:6
+    image: artellas/cards:7
     container_name: cards-ms
     ports:
       - "9000:9000"
@@ -377,7 +415,7 @@ services:
       service: microservice-eureka-config
 
   gatewayserver:
-    image: artellas/gatewayserver:6
+    image: artellas/gatewayserver:7
     container_name: gatewayserver-ms
     ports:
       - "8072:8072"
@@ -391,6 +429,7 @@ services:
     environment:
       SPRING_APPLICATION_NAME: gatewayserver
       OTEL_SERVICE_NAME: gatewayserver
+      SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_JWK-SET-URI: "http://keycloak:8080/realms/master/protocol/openid-connect/certs"
     extends:
       file: common-config.yaml
       service: microservice-eureka-config
