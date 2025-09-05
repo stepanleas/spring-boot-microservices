@@ -127,7 +127,7 @@
 				<version>3.4.5</version>
 				<configuration>
 					<to>
-						<image>artellas/${project.artifactId}:7</image>
+						<image>artellas/${project.artifactId}:8</image>
 					</to>
 					<container>
 						<mainClass>com.microservice_app.loans.LoansApplication</mainClass>

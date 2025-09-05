@@ -1,16 +1,21 @@
 services:
-  rabbit:
-    image: rabbitmq:4-management
-    hostname: rabbitmq
+  kafka:
+    image: docker.io/bitnami/kafka:3.9
     ports:
-      - "5672:5672"
-      - "15672:15672"
-    healthcheck:
-      test: rabbitmq-diagnostics check_port_connectivity
-      interval: 10s
-      timeout: 5s
-      retries: 10
-      start_period: 5s
+      - "9092:9092"
+    volumes:
+      - "kafka_data:/bitnami"
+    environment:
+      # KRaft settings
+      - KAFKA_CFG_NODE_ID=0
+      - KAFKA_CFG_PROCESS_ROLES=controller,broker
+      - KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=0@kafka:9093
+      # Listeners
+      - KAFKA_CFG_LISTENERS=PLAINTEXT://:9092,CONTROLLER://:9093
+      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://:9092
+      - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT
+      - KAFKA_CFG_CONTROLLER_LISTENER_NAMES=CONTROLLER
+      - KAFKA_CFG_INTER_BROKER_LISTENER_NAME=PLAINTEXT
     extends:
       file: common-config.yaml
       service: network-deploy-service
@@ -276,7 +281,7 @@ services:
       - ecommerce-ms
 
   configserver:
-    image: artellas/configserver:7
+    image: artellas/configserver:8
     container_name: configserver-ms
     ports:
       - "8071:8071"
@@ -293,7 +298,7 @@ services:
       OTEL_SERVICE_NAME: configserver
 
   eurekaserver:
-    image: artellas/eurekaserver:7
+    image: artellas/eurekaserver:8
     container_name: eurekaserver-ms
     ports:
       - "8070:8070"
@@ -327,7 +332,7 @@ services:
       - ../../volumes/default/accountsdb:/var/lib/mysql
 
   accounts:
-    image: artellas/accounts:7
+    image: artellas/accounts:8
     container_name: accounts-ms
     ports:
       - "8080:8080"
@@ -335,8 +340,6 @@ services:
       configserver:
         condition: service_healthy
       eurekaserver:
-        condition: service_healthy
-      rabbit:
         condition: service_healthy
       accountsdb:
         condition: service_healthy
@@ -349,7 +352,7 @@ services:
     environment:
       SPRING_APPLICATION_NAME: accounts
       SPRING_DATASOURCE_URL: jdbc:mysql://accountsdb:3306/accountsdb
-      SPRING_RABBITMQ_HOST: "rabbit"
+      SPRING_CLOUD_STREAM_KAFKA_BINDER_BROKERS: "kafka:9092"
       OTEL_SERVICE_NAME: accounts
     extends:
       file: common-config.yaml
@@ -369,7 +372,7 @@ services:
       - ../../volumes/default/loansdb:/var/lib/mysql
 
   loans:
-    image: artellas/loans:7
+    image: artellas/loans:8
     container_name: loans-ms
     ports:
       - "8090:8090"
@@ -408,7 +411,7 @@ services:
       - ../../volumes/default/cardsdb:/var/lib/mysql
 
   cards:
-    image: artellas/cards:7
+    image: artellas/cards:8
     container_name: cards-ms
     ports:
       - "9000:9000"
@@ -434,19 +437,16 @@ services:
       service: microservice-eureka-config
 
   message:
-    image: artellas/message:7
+    image: artellas/message:8
     container_name: message-ms
-    depends_on:
-      rabbit:
-        condition: service_healthy
     environment:
-      SPRING_RABBITMQ_HOST: "rabbit"
+      SPRING_CLOUD_STREAM_KAFKA_BINDER_BROKERS: "kafka:9092"
     extends:
       file: common-config.yaml
       service: network-deploy-service
 
   gatewayserver:
-    image: artellas/gatewayserver:7
+    image: artellas/gatewayserver:8
     container_name: gatewayserver-ms
     ports:
       - "8072:8072"
@@ -464,6 +464,10 @@ services:
     extends:
       file: common-config.yaml
       service: microservice-eureka-config
+
+volumes:
+  kafka_data:
+    driver: local
 
 networks:
   ecommerce-ms:
