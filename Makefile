@@ -16,7 +16,7 @@ push_images:
 	wait
 
 
-services := accounts loans cards configserver eurekaserver gatewayserver
+services := accounts loans cards configserver eurekaserver message gatewayserver
 
 build_images:
 	@start=$$(date +%s); \

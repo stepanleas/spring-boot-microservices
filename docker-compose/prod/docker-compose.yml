@@ -1,4 +1,20 @@
 services:
+  rabbit:
+    image: rabbitmq:4-management
+    hostname: rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    healthcheck:
+      test: rabbitmq-diagnostics check_port_connectivity
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 5s
+    extends:
+      file: common-config.yaml
+      service: network-deploy-service
+
   keycloak:
     image: quay.io/keycloak/keycloak:26.3.3
     container_name: keycloak
@@ -320,6 +336,8 @@ services:
         condition: service_healthy
       eurekaserver:
         condition: service_healthy
+      rabbit:
+        condition: service_healthy
       accountsdb:
         condition: service_healthy
     healthcheck:
@@ -331,6 +349,7 @@ services:
     environment:
       SPRING_APPLICATION_NAME: accounts
       SPRING_DATASOURCE_URL: jdbc:mysql://accountsdb:3306/accountsdb
+      SPRING_RABBITMQ_HOST: "rabbit"
       OTEL_SERVICE_NAME: accounts
     extends:
       file: common-config.yaml
@@ -413,6 +432,18 @@ services:
     extends:
       file: common-config.yaml
       service: microservice-eureka-config
+
+  message:
+    image: artellas/message:7
+    container_name: message-ms
+    depends_on:
+      rabbit:
+        condition: service_healthy
+    environment:
+      SPRING_RABBITMQ_HOST: "rabbit"
+    extends:
+      file: common-config.yaml
+      service: network-deploy-service
 
   gatewayserver:
     image: artellas/gatewayserver:7
