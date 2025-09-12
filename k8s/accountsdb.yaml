@@ -1,0 +1,88 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: accountsdb-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: accountsdb
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: accountsdb
+  template:
+    metadata:
+      labels:
+        app: accountsdb
+    spec:
+      containers:
+        - name: accountsdb
+          image: mysql:8
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              value: root
+            - name: MYSQL_DATABASE
+              value: accountsdb
+          ports:
+            - containerPort: 3306
+          volumeMounts:
+            - name: accountsdb-storage
+              mountPath: /var/lib/mysql
+            - name: initdb
+              mountPath: /docker-entrypoint-initdb.d
+      volumes:
+        - name: accountsdb-storage
+          persistentVolumeClaim:
+            claimName: accountsdb-pvc
+        - name: initdb
+          configMap:
+            name: accountsdb-init
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: accountsdb-init
+data:
+  accounts-schema.sql: |-
+    CREATE TABLE IF NOT EXISTS `customers` (
+      `customer_id` int AUTO_INCREMENT  PRIMARY KEY,
+      `name` varchar(100) NOT NULL,
+      `email` varchar(100) NOT NULL,
+      `mobile_number` varchar(20) NOT NULL,
+      `created_at` date NOT NULL,
+      `created_by` varchar(20) NOT NULL,
+      `updated_at` date DEFAULT NULL,
+      `updated_by` varchar(20) DEFAULT NULL
+    );
+
+    CREATE TABLE IF NOT EXISTS `accounts` (
+      `customer_id` int NOT NULL,
+      `account_number` int AUTO_INCREMENT  PRIMARY KEY,
+      `account_type` varchar(100) NOT NULL,
+      `branch_address` varchar(200) NOT NULL,
+      `communication_sw` boolean,
+      `created_at` date NOT NULL,
+      `created_by` varchar(20) NOT NULL,
+      `updated_at` date DEFAULT NULL,
+      `updated_by` varchar(20) DEFAULT NULL
+    );
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: accountsdb
+spec:
+  selector:
+    app: accountsdb
+  ports:
+    - protocol: TCP
+      port: 3306
+      targetPort: 3306

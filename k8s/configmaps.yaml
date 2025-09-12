@@ -1,0 +1,24 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: bank-configmap
+data:
+  SPRING_PROFILES_ACTIVE: "prod"
+  SPRING_CONFIG_IMPORT: "configserver:http://configserver:8071/"
+  EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: "http://eurekaserver:8070/eureka/"
+  CONFIGSERVER_APPLICATION_NAME: "configserver"
+  EUREKA_APPLICATION_NAME: "eurekaserver"
+  ACCOUNTS_APPLICATION_NAME: "accounts"
+  ACCOUNTS_DATASOURCE_URL: "jdbc:mysql://accountsdb:3306/accountsdb"
+  LOANS_APPLICATION_NAME: "loans"
+  LOANS_DATASOURCE_URL: "jdbc:mysql://loansdb:3306/loansdb"
+  CARDS_APPLICATION_NAME: "cards"
+  CARDS_DATASOURCE_URL: "jdbc:mysql://cardsdb:3306/cardsdb"
+  GATEWAY_APPLICATION_NAME: "gatewayserver"
+  KEYCLOAK_ADMIN: "admin"
+  KEYCLOAK_ADMIN_PASSWORD: "admin"
+  KEYCLOAK_DB: "mysql"
+  KEYCLOAK_DB_URL: "jdbc:mysql://keycloakdb:3306/keycloakdb"
+  KEYCLOAK_DB_USERNAME: "keycloak"
+  KEYCLOAK_DB_PASSWORD: "password"
+  SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_JWK-SET-URI: "http://keycloak:7080/realms/master/protocol/openid-connect/certs"
