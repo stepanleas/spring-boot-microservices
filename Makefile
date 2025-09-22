@@ -31,6 +31,7 @@ push_images:
 	done; \
 	wait
 
+# K8S
 start_minikube:
 	minikube status >/dev/null 2>&1 || minikube start
 
@@ -100,3 +101,22 @@ restart_app:
 	$(MAKE) resume_dbs
 	$(MAKE) apply_k8s_services
 	@echo "==== 🚀 Application restart completed successfully ===="
+
+HELM_DIR := deployment/helm
+CHARTS := \
+    grafana-loki:loki \
+    grafana-tempo:tempo \
+    grafana:grafana \
+    kafka:kafka \
+    kube-prometheus:prometheus \
+    keycloak:keycloak \
+    environments/prod-env:bank
+
+build_helm_charts:
+	@for chart in $(CHARTS); do \
+		CHART_PATH=$$(echo $$chart | cut -d':' -f1); \
+		NAME=$$(echo $$chart | cut -d':' -f2); \
+		echo ">>> Processing $$CHART_PATH (release: $$NAME)"; \
+		cd $(HELM_DIR)/$$CHART_PATH && helm dependency build && cd - >/dev/null; \
+		helm upgrade --install $$NAME $(HELM_DIR)/$$CHART_PATH; \
+	done

@@ -1,0 +1,55 @@
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+deploymentName: loans-deployment
+serviceName: loans
+appLabel: loans
+appName: loans
+
+replicaCount: 1
+
+image:
+  repository: artellas/loans
+  tag: 8
+
+containerPort: 8090
+
+service:
+  type: ClusterIP
+  port: 8090
+  targetPort: 8090
+
+appname_enabled: true
+profile_enabled: true
+config_enabled: true
+eureka_enabled: true
+resouceserver_enabled: false
+otel_enabled: true
+kafka_enabled: false
+datasource_url: jdbc:mysql://loansdb:3306/loansdb
+
+loansdb:
+  enabled: true
+  name: loansdb
+  pvcName: loansdb-pvc
+  storage: 1Gi
+  image:
+    repository: mysql
+    tag: 8
+  rootPassword: root
+  database: loansdb
+  schema: |
+    CREATE TABLE IF NOT EXISTS `loans` (
+      `loan_id` int NOT NULL AUTO_INCREMENT,
+      `mobile_number` varchar(15) NOT NULL,
+      `loan_number` varchar(100) NOT NULL,
+      `loan_type` varchar(100) NOT NULL,
+      `total_loan` int NOT NULL,
+      `amount_paid` int NOT NULL,
+      `outstanding_amount` int NOT NULL,
+      `created_at` date NOT NULL,
+      `created_by` varchar(20) NOT NULL,
+      `updated_at` date DEFAULT NULL,
+      `updated_by` varchar(20) DEFAULT NULL,
+      PRIMARY KEY (`loan_id`)
+    );

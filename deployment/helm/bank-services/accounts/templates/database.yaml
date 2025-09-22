@@ -1,0 +1,1 @@
+{{- include "common.database" (dict "root" . "db" .Values.accountsdb) -}}

@@ -1,0 +1,79 @@
+{{/*
+  Reusable database template
+  Usage:
+    {{- include "common.database" (dict "root" . "db" .Values.accountsdb) -}}
+  */}}
+
+  {{- define "common.database" -}}
+  {{- $root := .root -}}
+  {{- $db := .db -}}
+  {{- if $db.enabled }}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ $db.pvcName }}
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: {{ $db.storage }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ $db.name }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ $db.name }}
+  template:
+    metadata:
+      labels:
+        app: {{ $db.name }}
+    spec:
+      containers:
+        - name: {{ $db.name }}
+          image: {{ $db.image.repository }}:{{ $db.image.tag }}
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              value: {{ $db.rootPassword }}
+            - name: MYSQL_DATABASE
+              value: {{ $db.database }}
+          ports:
+            - containerPort: 3306
+          volumeMounts:
+            - name: {{ $db.name }}-storage
+              mountPath: /var/lib/mysql
+            - name: initdb
+              mountPath: /docker-entrypoint-initdb.d
+      volumes:
+        - name: {{ $db.name }}-storage
+          persistentVolumeClaim:
+            claimName: {{ $db.pvcName }}
+        - name: initdb
+          configMap:
+            name: {{ $db.name }}-init
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ $db.name }}-init
+data:
+  schema.sql: |-
+    {{ $db.schema | nindent 4 }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ $db.name }}
+spec:
+  selector:
+    app: {{ $db.name }}
+  ports:
+    - protocol: TCP
+      port: 3306
+      targetPort: 3306
+{{- end }}
+{{- end }}
